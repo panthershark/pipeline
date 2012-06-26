@@ -11,6 +11,8 @@ This example is in the tests folder.  It is basic and does not fully test all er
 ``` javascript
 var pipeline = require('../index.js'),
 	pl = pipeline.create("Tax and Gratuity Calculator");
+
+
 pl.on('end', function(err, results) {
 	if (err) {
 		console.log(err);
@@ -29,6 +31,8 @@ pl.on('end', function(err, results) {
 	console.log("Total with Gratuity: " + symbol + (price + tax + gratuity).toFixed(2) + currency);
 	process.exit();
 });
+
+
 pl.use(function(results, next) {
 	var init = results[0],
 		price = Number(init.price),
@@ -44,6 +48,8 @@ pl.use(function(results, next) {
 	// there is no blocking here so this will actually turn out to be synchronous.
 	next(null, { tax : price * taxrate });
 }, "Calculate Tax");
+
+
 pl.use(function(results, next) {
 	var init = results[0],
 		price = Number(init.price),
@@ -64,6 +70,8 @@ pl.use(function(results, next) {
 		next(null, { gratuity : taxprice * gratuityrate }) 
 	});
 }, "Calculate Gratuity");
+
+
 pl.execute({
 	currency: "USD",
 	symbol: "$",
