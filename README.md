@@ -14,7 +14,7 @@ npm install node-pipeline
 This example is in the tests folder.  It is basic and does not fully test all error conditions, but it is a good way to get the hang of the module.
 
 ``` javascript
-var pipeline = require('../index.js'),
+var pipeline = require('node-pipeline'),
 	pl = pipeline.create("Tax and Gratuity Calculator");
 
 pl.on('end', function(err, results) {
