@@ -8,7 +8,6 @@ Simple module to performing asynchronous inter-dependent series operations in no
 # Simple example for calculating gratuity
 This example is in the tests folder.  It is basic and does not fully test all error conditions, but it is a good way to get the hang of the module.
 
-<pre><code>
 ``` javascript
 var pipeline = require('../index.js'),
 	pl = pipeline.create("Tax and Gratuity Calculator");
@@ -73,4 +72,3 @@ pl.execute({
 	gratuityrate: argv.gratuity || "0.25"
 });
 ```
-</pre></code>
