@@ -9,7 +9,6 @@ Simple module to performing asynchronous inter-dependent series operations in no
 This example is in the tests folder.  It is basic and does not fully test all error conditions, but it is a good way to get the hang of the module.
 
 <pre><code>
-
 var pipeline = require('../index.js'),
 	pl = pipeline.create("Tax and Gratuity Calculator");
 
@@ -36,7 +35,6 @@ pl.on('end', function(err, results) {
 	process.exit();
 });
 
-
 pl.use(function(results, next) {
 	var init = results[0],
 		price = Number(init.price),
@@ -56,7 +54,6 @@ pl.use(function(results, next) {
 	next(null, { tax : price * taxrate });
 
 }, "Calculate Tax");
-
 
 pl.use(function(results, next) {
 	var init = results[0],
@@ -82,7 +79,6 @@ pl.use(function(results, next) {
 	});
 
 }, "Calculate Gratuity");
-
 
 pl.execute({
 	currency: "USD",
