@@ -5,6 +5,11 @@ Node.js module for simplifying and sequencing a number of dependent functions an
 
 Simple module to performing asynchronous inter-dependent series operations in node.  Unlike other more complicated approaches, this is pure javascript and very small (~100 lines of code with comments).
 
+# Install
+```
+npm install node-pipeline
+```
+
 # Simple example for calculating gratuity
 This example is in the tests folder.  It is basic and does not fully test all error conditions, but it is a good way to get the hang of the module.
 
@@ -63,7 +68,7 @@ pl.use(function(results, next) {
 		tax = results.length > 1 ? Number(results[1].tax) : NaN,
 		gratuityrate = Number(init.gratuityrate),
 		taxprice = price + tax;
-		
+
 	// Before async style quick error condition.
 	if (isNaN(price)) {
 		return 'Price is not a number: ' + price;
