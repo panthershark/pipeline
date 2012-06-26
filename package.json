@@ -1,0 +1,42 @@
+{
+  "name": "node-pipeline",
+   "version": "0.1.0",
+   "main": "index",
+   "description": "Simple module to performing asynchronous inter-dependent series operations in node.  Unlike other more complicated approaches, this is pure javascript and very small (~100 lines of code with comments).",
+   "keywords": [
+       "node",
+       "pipeline",
+       "async",
+       "series",
+       "execution"
+   ],
+   "author": {
+       "name": "Tommy Messbauer",
+       "email": "tom.messbauer@gmail.com",
+       "web": "http://www.vast.com",
+       "twitter": "tommydudebreaux"
+   }, 
+   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:tommydudebreaux/node-pipeline.git"
+  },
+  "directories": {
+    "tests": "tests"
+  },
+  "engines": {
+    "node": ">=0.6.0"
+  },
+  "scripts": {
+    "test": "node /tests/example.js"
+  },
+  "dependencies": {
+    "lodash": "*"
+    },
+  "devDependencies": {
+    "optimist": "*"
+  	},
+  "optionalDependencies": {},
+  "homepage": "http://vastdevblog.vast.com/"
+}
+
