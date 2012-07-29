@@ -1,6 +1,6 @@
 // This test will calculate tax and gratuity on a price.
 var opt = require('optimist'),
-	packageJSON = require('package.json'),
+	packageJSON = require('../package.json'),
 	argv = opt
 		.alias('h', 'help')
 		.alias('?', 'help')
