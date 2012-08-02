@@ -79,6 +79,7 @@ Pipeline.prototype.execute =function(err, params) {
 			} catch (e) {
 				// TODO: add stack trace
 				that.stop();
+				that.emit('error', e, that.results);
 				that.emit('end', e, that.results);
 			}
 
