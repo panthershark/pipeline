@@ -49,6 +49,7 @@ util.inherits(Pipeline, events.EventEmitter);
 // @name (string): Optional friendly string for the step.  Names are here to support a future feature where an event can be emitted when a step starts and completes.
 Pipeline.prototype.use = function(fn, name) {
 	this.steps.push({ name: name, run: fn });
+	return this;
 };
 
 // Start the execution of the pipeline.  Initial execution can be called like this:  pl.execute({ foo: "moo", poo: "doo" })
@@ -63,7 +64,7 @@ Pipeline.prototype.execute =function(err, params) {
 	if ( (this.currentStep > 0 && err) || this.currentStep >= this.steps.length) {
 		this.stop();
 		this.emit('end', err, this.results);
-		return;
+		return this;
 	}
 
 	var that = this,
@@ -88,6 +89,8 @@ Pipeline.prototype.execute =function(err, params) {
 	// execute the step.
 	this.currentStep++;
 	this.emit('step', step.name, action);
+
+	return this;
 	
 };
 
@@ -101,10 +104,12 @@ Pipeline.prototype.next =function(err, params) {
 Pipeline.prototype.reset = function() {
 	this.currentStep = 0;
 	this.results = [];
+	return this;
 };
 
 Pipeline.prototype.stop =  function() {
 	// by setting the currentStep, this will allow any pending async ops to finish before actually stopping.
 	this.currentStep = this.steps.length;
+	return this;
 };
 
