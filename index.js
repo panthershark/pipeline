@@ -64,6 +64,10 @@ Pipeline.prototype.execute =function(err, params) {
 	if ( (this.currentStep > 0 && err) || this.currentStep >= this.steps.length) {
 		this.stop();
 		this.emit('end', err, this.results);
+
+		if (err) {
+			this.emit('error', err, this.results);
+		}
 		return this;
 	}
 
