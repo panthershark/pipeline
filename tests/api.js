@@ -63,6 +63,8 @@ var plFactory = function() {
 test("Test Pipeline Execution", function(t) {
 	var pl = plFactory();
 
+	pl.timeout = 10000;
+
 	pl.on('end', function(err, results) {
 		var data = results[results.length - 1];
 
