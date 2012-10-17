@@ -28,9 +28,9 @@ var Pipeline = function(name) {
 	var that = this;
 
 	this.name = name || '';
-	this.currentStep = 0;
-	this.results = [];
 	this.steps = [];
+	this.timeout = 0;
+	this.reset();  // sets some defaults.
 
 	this.on('step', function(name, action) {
 		process.nextTick(action);
@@ -56,8 +56,24 @@ Pipeline.prototype.use = function(fn, name) {
 // @err (Object): An standard convention callback param for reporting errors.
 // @params (Object): The initial object state for the pipeline or the callback for a given step.  The initial params are available at index zero of the results array that carries state thorugh the call cycle.
 Pipeline.prototype.execute =function(err, params) {
-	var p = Array.prototype.slice.call(arguments, arguments.length - 1);
+	var p = Array.prototype.slice.call(arguments, arguments.length - 1),
+		that = this,
+		step = this.steps[this.currentStep],
+		action = null,
+		dtNow = new Date();
+
 	this.results.push( p.length > 0 ? p[0] : null );
+
+	// first run, start the timer
+	if (this.timeout > 0 && this.timing.length == 0) {
+		setTimeout(_.bind(this.timeoutElapsed, this), this.timeout);
+	}
+
+	// start tracking the timer
+	this.timing.push({ 
+		step: step ? step.name : 'END',
+		timestamp: dtNow
+	});
 
 	// if the err was thrown on a step, then abort the pipeline
 	// alternately if there are no more steps, then end.
@@ -71,9 +87,7 @@ Pipeline.prototype.execute =function(err, params) {
 		return this;
 	}
 
-	var that = this,
-		step = this.steps[this.currentStep],
-		action = _.bind(function(r, n) {
+	action = _.bind(function(r, n) {
 
 			// catch an error instantiating step.  Callback also has err field to report errors on callbacks.
 			try {
@@ -108,6 +122,7 @@ Pipeline.prototype.next =function(err, params) {
 Pipeline.prototype.reset = function() {
 	this.currentStep = 0;
 	this.results = [];
+	this.timing = []; 
 	return this;
 };
 
@@ -117,3 +132,28 @@ Pipeline.prototype.stop =  function() {
 	return this;
 };
 
+Pipeline.prototype.timeoutElapsed = function() {
+	if (this.timeout > 0 && this.timing.length > 0) {
+
+		// calculate execution time
+		var dtNow = new Date(),
+			step = this.steps[this.currentStep],
+			elapsed = dtNow.valueOf() - this.timing[0].timestamp.valueOf(),
+			err = null;
+
+		// if timeout has expired, then abort pipeline and emit timeout error
+		if (elapsed > this.timeout) {
+			err = { 
+				message: "Pipeline timeout.",
+				error: { 
+					step: this.name + ":"  + (step ? step.name : 'END') + " (" + this.currentStep + ")",
+					elapsed: elapsed
+				}
+			};
+
+			this.stop();
+			this.emit('end', err, this.results);
+		}
+	}
+	return this;
+};

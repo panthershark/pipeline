@@ -1,6 +1,6 @@
 {
   "name": "node-pipeline",
-   "version": "0.3.3",
+   "version": "0.4.0",
    "main": "index",
    "description": "Simple module to performing asynchronous inter-dependent series operations in node.  Unlike other more complicated approaches, this is pure javascript and very small (~100 lines of code with comments).",
    "keywords": [
@@ -28,13 +28,14 @@
     "node": ">=0.6.0"
   },
   "scripts": {
-    "test": "node /tests/example.js"
+    "test": "node tests/api.js"
   },
   "dependencies": {
-    "lodash": "0.7.0"
+    "lodash": "0.8.2"
     },
   "devDependencies": {
-    "optimist": "*"
+    "optimist": "*",
+    "tap": "*"
   	},
   "optionalDependencies": {},
   "homepage": "http://vastdevblog.vast.com/"
