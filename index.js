@@ -34,7 +34,7 @@ var Pipeline = function(name) {
 
 	this.on('step', function(name, action) {
 		process.nextTick(action);
-	});
+	})
 
 	this.on('next', function(err, params) {
 		process.nextTick( _.bind(that.execute, that, err, params) );
@@ -79,11 +79,7 @@ Pipeline.prototype.execute =function(err, params) {
 	// alternately if there are no more steps, then end.
 	if ( (this.currentStep > 0 && err) || this.currentStep >= this.steps.length) {
 		this.stop();
-		this.emit('end', err, this.results);
-
-		if (err) {
-			this.emit('error', err, this.results);
-		}
+		this.end(err);
 		return this;
 	}
 
@@ -99,7 +95,7 @@ Pipeline.prototype.execute =function(err, params) {
 				// TODO: add stack trace
 				that.stop();
 				that.emit('error', e, that.results);
-				that.emit('end', e, that.results);
+				this.end(e);
 			}
 
 		}, this, this.results, _.bind(this.next, this) );
@@ -123,7 +119,28 @@ Pipeline.prototype.reset = function() {
 	this.currentStep = 0;
 	this.results = [];
 	this.timing = []; 
+	this.finished = false;
 	return this;
+};
+
+Pipeline.prototype.end = function(err) {
+	var endListeners = this.listeners('end'),
+		that = this,
+		cleanup = function() { 
+			that.finished = true;
+			that.removeListener('end', cleanup);
+		};
+	
+	this.stop();
+
+	if (!this.finished) {
+
+		if (err) {
+			this.emit('error', err, this.results);
+		}
+		this.on('end', cleanup);
+		this.emit('end', err, this.results)
+	}
 };
 
 Pipeline.prototype.stop =  function() {
@@ -138,21 +155,16 @@ Pipeline.prototype.timeoutElapsed = function() {
 		// calculate execution time
 		var dtNow = new Date(),
 			step = this.steps[this.currentStep],
-			elapsed = dtNow.valueOf() - this.timing[0].timestamp.valueOf(),
-			err = null;
+			elapsed = dtNow.valueOf() - this.timing[0].timestamp.valueOf();
 
 		// if timeout has expired, then abort pipeline and emit timeout error
 		if (elapsed > this.timeout) {
-			err = { 
-				message: "Pipeline timeout.",
-				error: { 
-					step: this.name + ":"  + (step ? step.name : 'END') + " (" + this.currentStep + ")",
-					elapsed: elapsed
-				}
-			};
-
-			this.stop();
-			this.emit('end', err, this.results);
+			try {
+				throw new Error("Pipeline timeout.");
+			} catch (err) {
+				this.stop();
+				this.end(err);
+			}
 		}
 	}
 	return this;
