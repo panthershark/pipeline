@@ -1,6 +1,6 @@
 {
   "name": "node-pipeline",
-   "version": "0.4.1",
+   "version": "0.5.0",
    "main": "index",
    "description": "Simple module to performing asynchronous inter-dependent series operations in node.  Unlike other more complicated approaches, this is pure javascript and very small (~100 lines of code with comments).",
    "keywords": [
@@ -31,7 +31,7 @@
     "test": "node tests/api.js"
   },
   "dependencies": {
-    "lodash": "0.8.2"
+    "lodash": "1.2.1"
     },
   "devDependencies": {
     "optimist": "*",

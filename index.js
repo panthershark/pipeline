@@ -33,11 +33,11 @@ var Pipeline = function(name) {
 	this.reset();  // sets some defaults.
 
 	this.on('step', function(name, action) {
-		process.nextTick(action);
-	})
+		setImmediate(action);
+	});
 
 	this.on('next', function(err, params) {
-		process.nextTick( _.bind(that.execute, that, err, params) );
+		that.execute(err, params);
 	});
 };
 
@@ -102,7 +102,7 @@ Pipeline.prototype.execute =function(err, params) {
 
 	// execute the step.
 	this.currentStep++;
-	this.emit('step', step.name, action);
+	this.emit('step', { pipeline: this, step: step.name }, action);
 
 	return this;
 	

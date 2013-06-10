@@ -8,8 +8,8 @@ var plFactory = function() {
 	var pl = Pipeline.create("Api Test");
 
 	// add logging with event emitter
-	pl.on('step', function(name) {
-		console.log("Executing step - " + pl.name + ":" + name);
+	pl.on('step', function(data) {
+		console.log("Executing step - " + data.pipeline.name + ":" + data.step);
 	})
 
 	// execute request
