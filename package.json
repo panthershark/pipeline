@@ -31,7 +31,6 @@
     "test": "node tests/api.js"
   },
   "dependencies": {
-    "lodash": "1.2.1"
     },
   "devDependencies": {
     "optimist": "*",

@@ -1,5 +1,4 @@
-var _ = require("lodash"),
-	util = require("util"),
+var util = require("util"),
     events = require('events');
 
 /*  Example:
@@ -30,6 +29,7 @@ var Pipeline = function(name) {
 	this.name = name || '';
 	this.steps = [];
 	this.timeout = 0;
+	this.timeoutId = null; // used to clear timeouts.
 	this.reset();  // sets some defaults.
 
 	this.on('step', function(name, action) {
@@ -66,7 +66,10 @@ Pipeline.prototype.execute =function(err, params) {
 
 	// first run, start the timer
 	if (this.timeout > 0 && this.timing.length == 0) {
-		setTimeout(_.bind(this.timeoutElapsed, this), this.timeout);
+		if (this.timeoutId) {
+			clearTimeout(this.timeoutId);
+		}
+		this.timeoutId = setTimeout(this.timeoutElapsed.bind(this), this.timeout);
 	}
 
 	// start tracking the timer
@@ -78,12 +81,11 @@ Pipeline.prototype.execute =function(err, params) {
 	// if the err was thrown on a step, then abort the pipeline
 	// alternately if there are no more steps, then end.
 	if ( (this.currentStep > 0 && err) || this.currentStep >= this.steps.length) {
-		this.stop();
 		this.end(err);
 		return this;
 	}
 
-	action = _.bind(function(r, n) {
+	action = (function(r, n) {
 
 			// catch an error instantiating step.  Callback also has err field to report errors on callbacks.
 			try {
@@ -93,12 +95,11 @@ Pipeline.prototype.execute =function(err, params) {
 				}
 			} catch (e) {
 				// TODO: add stack trace
-				that.stop();
 				that.emit('error', e, that.results);
 				this.end(e);
 			}
 
-		}, this, this.results, _.bind(this.next, this) );
+		}).bind(this, this.results, this.next.bind(this));
 
 	// execute the step.
 	this.currentStep++;
@@ -128,7 +129,9 @@ Pipeline.prototype.end = function(err) {
 		that = this,
 		cleanup = function() { 
 			that.finished = true;
-			that.removeListener('end', cleanup);
+
+			// remove all end listeners since this pipeline is complete.
+			that.removeAllListeners('end');
 		};
 	
 	this.stop();
@@ -146,26 +149,17 @@ Pipeline.prototype.end = function(err) {
 Pipeline.prototype.stop =  function() {
 	// by setting the currentStep, this will allow any pending async ops to finish before actually stopping.
 	this.currentStep = this.steps.length;
+	if (this.timeoutId) {
+		clearTimeout(this.timeoutId);
+	}
 	return this;
 };
 
 Pipeline.prototype.timeoutElapsed = function() {
 	if (this.timeout > 0 && this.timing.length > 0) {
 
-		// calculate execution time
-		var dtNow = new Date(),
-			step = this.steps[this.currentStep],
-			elapsed = dtNow.valueOf() - this.timing[0].timestamp.valueOf();
-
 		// if timeout has expired, then abort pipeline and emit timeout error
-		if (elapsed > this.timeout) {
-			try {
-				throw new Error("Pipeline timeout.");
-			} catch (err) {
-				this.stop();
-				this.end(err);
-			}
-		}
+		this.end(new Error("Pipeline timeout."));
 	}
 	return this;
 };
