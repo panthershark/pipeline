@@ -32,6 +32,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "lodash": "*",
     "optimist": "*",
     "tap": "*"
   },

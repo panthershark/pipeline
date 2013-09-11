@@ -33,7 +33,12 @@ var Pipeline = function(name) {
 	this.reset();  // sets some defaults.
 
 	this.on('step', function(name, action) {
-		setImmediate(action);
+		if (setImmediate) {
+			setImmediate(action);
+		}
+		else {
+			process.nextTick(action);
+		}
 	});
 
 	this.on('next', function(err, params) {
