@@ -1,6 +1,6 @@
 {
   "name": "node-pipeline",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "main": "index",
   "description": "Simple module to performing asynchronous inter-dependent series operations in node.  Unlike other more complicated approaches, this is pure javascript and very small (~100 lines of code with comments).",
   "keywords": [
