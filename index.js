@@ -96,8 +96,6 @@ Pipeline.prototype.execute =function(err, params) {
 					throw err;
 				}
 			} catch (e) {
-				// TODO: add stack trace
-				that.emit('error', e, that.results);
 				this.end(e);
 			}
 
@@ -140,9 +138,6 @@ Pipeline.prototype.end = function(err) {
 
 	if (!this.finished) {
 
-		if (err) {
-			this.emit('error', err, this.results);
-		}
 		this.on('end', cleanup);
 		this.emit('end', err, this.results)
 	}

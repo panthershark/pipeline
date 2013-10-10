@@ -23,12 +23,8 @@ var plFactory = function() {
 				body += chunk;
 			})
 
-			.on('end', function() {
-				next(null, body);
-			})
-
-			.on('error', function(err) {
-				next(err);
+			.on('end', function(err) {
+				next(err, body);
 			});
 		});
 	}, "Request api")
