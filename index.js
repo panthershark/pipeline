@@ -32,10 +32,13 @@ var Pipeline = function(name) {
 	this.timeoutId = null; // used to clear timeouts.
 	this.reset();  // sets some defaults.
 
-	var setImmediate = global.setImmediate || process.nextTick;
-
 	this.on('step', function(name, action) {
-		setImmediate(action);
+		if (typeof(setImmediate) === 'function') {
+			setImmediate(action);
+		}
+		else {
+			setTimeout(action, 0);
+		}
 	});
 
 	this.on('next', function(err, params) {
