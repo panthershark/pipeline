@@ -13,13 +13,12 @@
   "author": {
     "name": "Tommy Messbauer",
     "email": "tom.messbauer@gmail.com",
-    "web": "http://www.vast.com",
-    "twitter": "tommydudebreaux"
+    "twitter": "tommymessbauer"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git@github.com:tommydudebreaux/node-pipeline.git"
+    "url": "git@github.com:tommymessbauer/node-pipeline.git"
   },
   "directories": {
     "tests": "tests"
@@ -36,6 +35,5 @@
     "optimist": "*",
     "tap": "*"
   },
-  "optionalDependencies": {},
-  "homepage": "http://vastdevblog.vast.com/"
+  "optionalDependencies": {}
 }
